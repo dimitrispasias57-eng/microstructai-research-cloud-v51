@@ -202,9 +202,13 @@ def spatial_page(kind):
                     rectangle=ext.drawn_roi(value,first.shape,identity)
                     for name,v in zip(('x','y','w','h'),rectangle):st.session_state[prefix+'_'+name]=v
                     st.session_state[prefix+'_last_draw']=value
-                st.caption('Drawing fills the numeric coordinates below in native source pixels. Changes invalidate the proposal and review. This v5 route crops before proposing; it is not the older measurement-only ROI workflow.')
+                st.caption('The rectangle automatically fills the numeric coordinates below in native source pixels. Check these coordinates, then choose Create experimental mask proposal. Changes invalidate the proposal and review. This v5 route crops before proposing; it is not the older measurement-only ROI workflow.')
             cs=st.columns(4);h,w=first.shape[:2]
-            config['roi']=[cs[0].number_input('x (zero-based)',0,w-2,0,key=prefix+'_x'),cs[1].number_input('y (zero-based)',0,h-2,0,key=prefix+'_y'),cs[2].number_input('Width',2,w,w,key=prefix+'_w'),cs[3].number_input('Height',2,h,h,key=prefix+'_h')]
+            config['roi']=[]
+            for column,name,label,minimum,maximum,initial in zip(cs,('x','y','w','h'),('x (zero-based)','y (zero-based)','Width','Height'),(0,0,2,2),(w-2,h-2,w,h),(0,0,w,h)):
+                key=prefix+'_'+name
+                st.session_state.setdefault(key,initial)
+                config['roi'].append(column.number_input(label,minimum,maximum,value=None,key=key))
         if config['representation']=='Objects / connected regions':st.info('Connected components are not cell identities. Touching objects are not automatically separated.')
     sig=signature({'files':[(r['name'],r['sha256']) for r in frames],'config':config,'study':study})
     old=st.session_state.get(prefix+'_result')
