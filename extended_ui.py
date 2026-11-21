@@ -6,6 +6,22 @@ import streamlit as st
 import backend as b
 import extensions as e
 import reporting as rpt
+from contextlib import contextmanager
+
+@contextmanager
+def observe_host_resources():
+    """Observe adapter execution; never alter inputs, results or frozen engines."""
+    import threading, time, psutil
+    process=psutil.Process();stop=threading.Event()
+    samples=[process.memory_info().rss];started=time.perf_counter();cpu=time.process_time()
+    measurement={'sampling_interval_ms':20,'scope':'Whole host process RSS/CPU during this operation; includes other sessions and lock wait, not per-session attribution.'}
+    def sample():
+        while not stop.wait(.02):samples.append(process.memory_info().rss)
+    sampler=threading.Thread(target=sample,name='host-resource-observer',daemon=True);sampler.start()
+    try:yield measurement
+    finally:
+        stop.set();sampler.join(timeout=1);samples.append(process.memory_info().rss)
+        measurement.update(wall_seconds=time.perf_counter()-started,process_cpu_seconds=time.process_time()-cpu,rss_start_mib=samples[0]/1024**2,peak_sampled_process_rss_mib=max(samples)/1024**2,rss_end_mib=samples[-1]/1024**2,samples=len(samples))
 
 NAMES=['Project / Dataset','Advanced M2 / Reference Workflow','Supplied-instance Morphology','Fibrin / Clot Structure','PCA / Multivariate Analysis','Structural Detail / QC / Robustness','Supplied-track Flow Analysis']
 NAMES+=['Descriptive / Reference-table Comparison','Device-distance Structure']
@@ -483,8 +499,12 @@ def legacy_objects(api):
     token=api['signature']([[(f['name'],f['sha256']) for f in frames],params,target,acquisition]);saved=st.session_state.get('object_result')
     if saved and saved['token']!=token:st.session_state.pop('object_result',None);saved=None
     if st.button('Run historical Object Mode',disabled=not acquisition or not target.strip()):
-        saved={'token':token,'result':e.legacy_object_recording(frames,params),'reviews':{}};st.session_state.object_result=saved
+        with observe_host_resources() as host_resources:result=e.legacy_object_recording(frames,params)
+        saved={'token':token,'result':result,'reviews':{},'host_resources':host_resources};st.session_state.object_result=saved
     if not saved:return
+    with st.expander('Host resource observation — this run'):
+        st.caption('Operational measurements only. Shared-process RSS is not isolated session memory or a worst-case capacity guarantee.')
+        st.json(saved.get('host_resources',{}))
     result=saved['result'];previews=result['previews'];index=st.selectbox('Inspect object observation',range(len(previews)),format_func=lambda i:previews[i]['filename'],key='object_case')
     preview=previews[index];mask=np.asarray(preview['mask'],bool);original=preview.get('camera_crop_gray',preview['image'])
     if st.checkbox('Original only — hide object proposal',key='object_original'):st.image(b.display_u8(original),width=600)
@@ -513,6 +533,6 @@ def legacy_objects(api):
         figures['object_diagnostic.png']=rpt.existing_figure_bytes(factory,table,axis);st.image(figures['object_diagnostic.png'])
         extras['object_diagnostic.svg']=rpt.existing_figure_bytes(factory,table,axis,format='svg')
         extras['object_diagnostic.pdf']=rpt.existing_figure_bytes(factory,table,axis,format='pdf')
-    api['show'](module,table,{'input_count':len(frames),'analysed_count':len(table),'configuration':result['params'],'target':target,'source_token':token,'sources':[f['metadata'] for f in frames],'reviews':saved['reviews'],'warnings':result.get('warnings',[])},figures,extras)
+    api['show'](module,table,{'input_count':len(frames),'analysed_count':len(table),'configuration':result['params'],'target':target,'source_token':token,'sources':[f['metadata'] for f in frames],'reviews':saved['reviews'],'warnings':result.get('warnings',[]),'host_resources':saved.get('host_resources',{})},figures,extras)
 
 PAGES={NAMES[0]:project,NAMES[1]:advanced,NAMES[2]:instances,NAMES[4]:pca,NAMES[5]:structures,NAMES[6]:flow,NAMES[7]:comparison,NAMES[8]:device,NAMES[9]:review,NAMES[10]:multi_sample,NAMES[11]:batch,NAMES[12]:legacy_objects}

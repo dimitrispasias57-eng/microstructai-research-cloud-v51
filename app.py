@@ -34,12 +34,22 @@ def model():return b.native.load_model()
 def signature(value):return b.native.sha_bytes(json.dumps(value,sort_keys=True,default=str).encode())
 def payloads(uploads):return [(u.name,u.getvalue()) for u in uploads or []]
 def now():return datetime.datetime.now(datetime.timezone.utc).isoformat()
+@st.cache_data
+def deployment_identity():
+    """Public reproducibility metadata only; no environment or credentials."""
+    import subprocess
+    identity={'version':b.VERSION,'entry_point':'app.py','entry_point_sha256':b.native.sha_bytes((b.ROOT/'app.py').read_bytes())}
+    try:
+        commit=subprocess.run(['git','rev-parse','HEAD'],cwd=b.ROOT,capture_output=True,text=True,check=True,timeout=3).stdout.strip()
+        if len(commit)==40 and all(c in '0123456789abcdef' for c in commit):identity['git_commit']=commit
+    except (OSError,subprocess.SubprocessError):identity['git_commit']=None
+    return identity
 def header(name):
     st.header(name);st.caption(BADGES[name]);st.warning(LIMITS[name])
 def upload(label,key,multiple=True,types=None):
     return st.file_uploader(label,type=types or ['png','jpg','jpeg','bmp','tif','tiff'],accept_multiple_files=multiple,key=key+str(st.session_state.epoch))
 def export_view(module,frame,metadata,figures=None,extras=None):
-    metadata={'session_id':st.session_state.session_id,'status':BADGES[module],'project':st.session_state.get('project_label',''),'project_notes':st.session_state.get('project_notes',''),**metadata}
+    metadata={'session_id':st.session_state.session_id,'deployment':deployment_identity(),'status':BADGES[module],'project':st.session_state.get('project_label',''),'project_notes':st.session_state.get('project_notes',''),**metadata}
     package=rpt.bundle(module,frame,metadata,LIMITS[module],figures,extras)
     st.session_state.exports[module]=package
     st.subheader('Export')
@@ -408,15 +418,20 @@ def validation_page():
     original=upload('Optional original image — same native geometry','val_original',False)
     evidence=st.text_input('Reference provenance / annotation method',key='val_evidence')
     if not(pred and ref):
+        st.session_state.pop('val_result',None)
         st.session_state.exports.pop(MODES[6],None)
         return
     a=b.binary(b.decode_batch([(pred.name,pred.getvalue())])[0]['image']);c=b.binary(b.decode_batch([(ref.name,ref.getvalue())])[0]['image'])
     source=b.decode_batch([(original.name,original.getvalue())])[0]['image'] if original else None
     if source is not None and source.shape[:2]!=a.shape:raise ValueError('Original and masks must have identical geometry; no registration or resizing.')
     sig=signature([b.native.sha_bytes(pred.getvalue()),b.native.sha_bytes(ref.getvalue()),b.native.sha_bytes(original.getvalue()) if original else None,evidence])
-    if st.session_state.get('val_signature')!=sig:st.session_state.exports.pop(MODES[6],None);st.session_state.val_signature=sig
+    if st.session_state.get('val_signature')!=sig:
+        st.session_state.pop('val_result',None);st.session_state.exports.pop(MODES[6],None);st.session_state.val_signature=sig
     if st.button('Compare supplied masks',disabled=not evidence.strip(),type='primary'):
-        result=b.compare_masks(a,c);table=pd.DataFrame([result]);st.dataframe(table)
+        st.session_state.val_result=b.compare_masks(a,c)
+    result=st.session_state.get('val_result')
+    if result is not None:
+        table=pd.DataFrame([result]);st.dataframe(table)
         image=b.native.png_bytes(rpt.panel(c.astype('uint8')*255,a));st.image(image,caption='Reference · prediction · overlap view · prediction contour')
         figures={'comparison.png':image}
         if source is not None:
@@ -468,6 +483,8 @@ try:
         st.write('Aggregation/rheology pairing: NO_DEFENSIBLE_PAIRING. Classical descriptors, temporal trajectories, dynamics and PCA have software/synthetic evidence, not equivalent clinical validation. Dynamic morphology is not direct mechanical measurement. Supplied reference quality is the user’s responsibility.')
         st.write('LOCAL/ADVANCED ONLY: oversized recordings, historical external-API M2 and authenticated research harnesses. Video-container transport and unsupported research branches are not claimed as working product features; supplied tracks do not imply automatic cell identification. No paid or external inference API is configured.')
         st.json({'version':b.VERSION,'vendor_files_verified':b.verify_vendors(),'native_model':b.native.verify_science()})
+        st.caption('Running deployment — public reproducibility metadata')
+        st.json(deployment_identity())
 except Exception as exc:
     st.error(f'This module could not complete: {exc}')
     st.caption('Other modules remain available. No source data was silently resized, removed or repaired. Correct the input or use the preserved local workflow.')
