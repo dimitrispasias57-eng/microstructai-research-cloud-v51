@@ -334,9 +334,17 @@ def device(api):
         f=api['upload']('Repeated distance-band results CSV','device_profile',False,['csv'])
         if f:
             data=read_csv(f);metric=st.selectbox('Distance-profile descriptor',list(data),key='device_profile_metric')
+            profile_token=api['signature']([b.native.sha_bytes(f.getvalue()),metric])
+            profile_saved=st.session_state.get('device_profile_result')
+            if profile_saved and profile_saved['token']!=profile_token:
+                st.session_state.pop('device_profile_result',None);profile_saved=None
             if st.button('Estimate existing exploratory profile'):
-                result=e.si.estimate_device_influence_profile(data,metric);st.json(b.json_safe({k:v for k,v in result.items() if k!='profile'}));st.dataframe(result['profile'])
+                result=e.si.estimate_device_influence_profile(data,metric)
+                profile_saved={'token':profile_token,'result':result};st.session_state.device_profile_result=profile_saved
+            if profile_saved:
+                result=profile_saved['result'];st.json(b.json_safe({k:v for k,v in result.items() if k!='profile'}));st.dataframe(result['profile'])
                 st.download_button('Profile CSV',rpt.csv_bytes(result['profile']),'device_profile.csv','text/csv')
+        else:st.session_state.pop('device_profile_result',None)
 
 def review(api):
     module=NAMES[9];api['header'](module);rc=e.review_engine()
