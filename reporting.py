@@ -7,6 +7,28 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from backend import VERSION, json_safe, native, display_u8
 PLOT_LOCK=threading.Lock()
 
+def distribution_bytes(frame,column):
+    with PLOT_LOCK:
+        fig=Figure(figsize=(8,4),layout='constrained');FigureCanvasAgg(fig);ax=fig.subplots()
+        values=pd.to_numeric(frame[column],errors='coerce').replace([np.inf,-np.inf],np.nan).dropna()
+        ax.hist(values,bins='auto');ax.set_xlabel(column);ax.set_ylabel('Included observations (not independent donors)')
+        ax.set_title('Descriptive distribution');buf=io.BytesIO();fig.savefig(buf,format='png',dpi=130);return buf.getvalue()
+
+def loadings_figure_bytes(loadings):
+    with PLOT_LOCK:
+        fig=Figure(figsize=(8,max(4,.3*len(loadings))),layout='constrained');FigureCanvasAgg(fig);ax=fig.subplots()
+        y=np.arange(len(loadings));ax.barh(y-.18,loadings.PC1,.35,label='PC1');ax.barh(y+.18,loadings.PC2,.35,label='PC2')
+        ax.set_yticks(y,loadings.index);ax.set_xlabel('PCA loading');ax.legend();buf=io.BytesIO();fig.savefig(buf,format='png',dpi=130);return buf.getvalue()
+
+def existing_figure_bytes(factory,*args,format='png',**kwargs):
+    """Serialize an unchanged historical plotting function under the shared lock."""
+    with PLOT_LOCK:
+        import matplotlib.pyplot as plt
+        fig=factory(*args,**kwargs)
+        try:
+            buf=io.BytesIO();fig.savefig(buf,format=format,dpi=130,bbox_inches='tight');return buf.getvalue()
+        finally:plt.close(fig)
+
 def csv_bytes(frame):
     # Neutralise spreadsheet formulas in user-controlled text, leaving numbers typed.
     safe=frame.copy()
@@ -50,6 +72,12 @@ def pca_loadings_bytes(loadings):
 def bundle(module,frame,metadata,limitations,figures=None,extras=None):
     figures=figures or {};extras=extras or {}
     meta={'software':'MicroStructAI Research Cloud','version':VERSION,'module':module,**metadata,'research_use_only':True}
+    review_status=metadata.get('human_review_status',metadata.get('review_status','Not declared for this analysis'))
+    if 'reviews' in metadata:review_status=str(len(metadata['reviews']))+' explicitly reviewed observations; see provenance for the remaining observations'
+    fields={'Scientific status':metadata.get('status','Research output; see module limitations'),
+        'Inputs':metadata.get('input_count','Not declared'),'Analysed':metadata.get('analysed_count','Not declared'),
+        'Human review':review_status,'Coverage / exclusions':'Retained in result rows and provenance; absent values are not zero.'}
+    summary='<dl>'+''.join('<dt>'+html.escape(k)+'</dt><dd>'+html.escape(str(v))+'</dd>' for k,v in fields.items())+'</dl>'
     pictures=''.join('<figure><figcaption>'+html.escape(n)+'</figcaption><img alt="'+html.escape(n,quote=True)+'" src="data:image/png;base64,'+base64.b64encode(b).decode()+'"></figure>' for n,b in figures.items())
     # All values remain in the report. Only the table scrolls, never the document.
     # Keep long machine-readable provenance accessible without burying the figures.
@@ -70,6 +98,7 @@ thead th{position:sticky;top:0;background:#edf5f7;z-index:1}tbody tr:nth-child(e
     report=('<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MicroStructAI research report</title><style>'+style+'</style></head><body><main>'
         '<h1>MicroStructAI Research Cloud '+VERSION+'</h1><h2>'+html.escape(module)+'</h2>'
         '<p class="ruo">Research Use Only. No diagnostic or clinical interpretation.</p><p>'+html.escape(limitations)+'</p>'
+        +summary+
         '<p class="muted">'+str(len(frame))+' result rows · '+str(len(frame.columns))+' columns. Observations are not necessarily independent samples.</p>'
         + ('<h2>Figures</h2>'+pictures if pictures else '')
         + '<h2 id="results-heading">Complete results</h2><p id="table-help">Scroll within this table horizontally and vertically to inspect all columns and rows. Keyboard: focus the table and use arrow keys. No result columns are omitted. The full table is also in results.csv in the ZIP download.</p>'

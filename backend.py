@@ -1,6 +1,6 @@
 """New transport/orchestration layer; quantitative functions remain vendored unchanged."""
 from pathlib import Path
-from functools import lru_cache
+from functools import lru_cache, wraps
 import sys, hashlib, io, json, importlib.util, threading, copy
 from legacy.accepted_beta6.research.product import runtime_profile
 runtime_profile.configure()
@@ -24,8 +24,17 @@ from modules.v4_ingestion import load_frames, display_u8
 from modules.io_utils import natural_sort_key
 from legacy.RBC_DEFORMABILITY_DEV.core import dynamics
 from legacy.accepted_beta6.research.product import rbc_temporal
-VERSION='5.0-rc1'
+VERSION='5.1-rc1'
 ENGINE_LOCK=threading.Lock()
+ANALYSIS_SLOT=threading.BoundedSemaphore(1)
+
+def bounded_analysis(fn):
+    @wraps(fn)
+    def run(*args,**kwargs):
+        if not ANALYSIS_SLOT.acquire(blocking=False):raise ValueError('Server is processing another heavy analysis. Retry shortly; no inputs were discarded.')
+        try:return fn(*args,**kwargs)
+        finally:ANALYSIS_SLOT.release()
+    return run
 
 def verify_vendors():
     if not runtime_profile.describe()['profile_active']:
@@ -97,6 +106,7 @@ def crop(a,roi):
         raise ValueError('ROI must be an in-bounds rectangle: zero-based x, y, width, height. No clipping is applied.')
     return a[y:y+h,x:x+w].copy()
 
+@bounded_analysis
 def propose_general(frames,config):
     params={'background_correction':config.get('illumination',False),'background_sigma':config.get('background_scale',25.),
             'threshold_method':config.get('threshold','otsu'),'min_object_size':config.get('min_area',40),
@@ -110,6 +120,7 @@ def propose_general(frames,config):
         records.append({**f,'original_roi':a,'selected':selected,'corrected':corrected,'mask':mask,'review':'NOT_REVIEWED'})
     return records
 
+@bounded_analysis
 def measure_general(records):
     rows=[];objects=[]
     for r in records:
@@ -134,6 +145,7 @@ def rbc_defaults():
     return dict(m.DEFAULT_CAMERA_PRESETS['USB camera RBC default'],rbcAnalysisMethod='Standard RBC Gap Mode',
                 rbcSegmentationInputSource='MATLAB Iraw01 processed grayscale',matlab_fps=1.,removeModes=1)
 
+@bounded_analysis
 def analyze_rbc(frames,params):
     if len({r['image'].shape for r in frames})!=1:raise ValueError('One recording requires consistent image dimensions/channels.')
     m=rbc_engine();p=copy.deepcopy(params)

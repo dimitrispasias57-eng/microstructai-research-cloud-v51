@@ -1,0 +1,117 @@
+[
+  {
+    "path": "full_product/__init__.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\full_product\\__init__.py",
+    "sha256": "670dc0f137353c29228aa893a7cab4d33a1aa63711fb9148e0f19e7b102f45e9"
+  },
+  {
+    "path": "full_product/bootstrap.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\full_product\\bootstrap.py",
+    "sha256": "6805a69aee15fe9c1d0ec15bc1d31363086b4d46b948ccfb4d66bfffeffbbc08"
+  },
+  {
+    "path": "full_product/tracking.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\full_product\\tracking.py",
+    "sha256": "d30523c40b8a832a7ffc73c509639bf38c20ed72b83c6d1636f4d79e43128299"
+  },
+  {
+    "path": "full_product/tracking_import_v2.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\full_product\\tracking_import_v2.py",
+    "sha256": "64270e5ea789e7d232b3f320c123c2944b7e03cbbcc6cb640740f9ceade8df21"
+  },
+  {
+    "path": "historical_ui/general_metrics.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\usability\\general_metrics.py",
+    "sha256": "87b21cfec33b91bbfa470f5431e32bb7579b1ad7761c34e1f92a4c20fe80ace2"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/product/service.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\product\\service.py",
+    "sha256": "bc46c7c66fbfb66c3e306e9d343d68feb782dd465cc0e033566f751fb43f8a4b"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/product/definitions.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\product\\definitions.py",
+    "sha256": "59e54ce1e87c20303ace6dddb754914e89e984059218680fd7347eacf1ae4b4b"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/product/rbc_morphology.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\product\\rbc_morphology.py",
+    "sha256": "9de81061e1292924a45af12b41caf7c6afe048457d8bac99d9638533766a52a2"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/product/hosted_runtime.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\product\\hosted_runtime.py",
+    "sha256": "b7157cb06a509bed0622ab9b5dc5dde83867be8a4f5cb3457d63766b5e5207dd"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/bootstrap.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\bootstrap.py",
+    "sha256": "9d82d54faa2afd580cb96f7bef1f6061ab066eca7f5863c1bf2daefd541d3774"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/review_core.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\review_core.py",
+    "sha256": "985a6f5d52bcb663a007e9eeaebeae264b4c17840bca58b90e5f9f98e2cd2f05"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/review_ui.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\review_ui.py",
+    "sha256": "d6d7171d92c1d27e06a091ca2d82f8173fedb2030750bdc5e169d39c5bd26512"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/VENDOR_SHA256.json",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\VENDOR_SHA256.json",
+    "sha256": "3aeb36efece59319265cf179e578a772c89b84bec059cad4229805b03ec17a78"
+  },
+  {
+    "path": "roi_component/index.html",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\usability\\roi_component\\index.html",
+    "sha256": "d772c1a128b9947eb9e9634557f1f3f7e9ee3e0069b212f47e68b3c783a4319b"
+  },
+  {
+    "path": "roi_component/roi.js",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\usability\\roi_component\\roi.js",
+    "sha256": "b9f97e17a0edc05aed2e227458fafdeb0f82d7e789249b2d784fb3c42a87435d"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_SEGMENTATION_V02_DEV/protocol/V02_FINAL_SETTINGS.json",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_SEGMENTATION_V02_DEV\\protocol\\V02_FINAL_SETTINGS.json",
+    "sha256": "c1d67283a3eb872c0d1c30f6c1ad617baf760a81c3674a68029ecc4c3fb95d10"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_MORPHOLOGY_DEV/morphology/io.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_MORPHOLOGY_DEV\\morphology\\io.py",
+    "sha256": "fdf7de05219b8b3fc54f252d31630d14a3e96e4d0c7f43739570deaf9ea903c4"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_SEGMENTATION_V02_DEV/seg02.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_SEGMENTATION_V02_DEV\\seg02.py",
+    "sha256": "04d74ec35ada34adad4dbbf5de511ca0abb48673bcd713e311766cf9682a8d0c"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_MORPHOLOGY_DEV/morphology/engine.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_MORPHOLOGY_DEV\\morphology\\engine.py",
+    "sha256": "0c1700082a068e4978acb6e80a46871915f379f651967c4d3afa43d829e92cf4"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_PATHOLOGICS_TARGET_SEGMENTER_V01/frozen/target_segment.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_PATHOLOGICS_TARGET_SEGMENTER_V01\\frozen\\target_segment.py",
+    "sha256": "ed80d5702c80251453139e0902907960d852db9ef480b1f1226612afc0fdad36"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_SEGMENTATION_DEV/rbcseg/adapter.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_SEGMENTATION_DEV\\rbcseg\\adapter.py",
+    "sha256": "86340a57729c922090fe26b9cc7ce35d6f73724ab79475695b2ebf013480ce7b"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_SEGMENTATION_DEV/rbcseg/__init__.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_SEGMENTATION_DEV\\rbcseg\\__init__.py",
+    "sha256": "bb22c853976833fdaac9b87bb2b711b26516a1790a063a54f25551cbfe345d71"
+  },
+  {
+    "path": "legacy/accepted_beta6/research/review/vendor/RBC_MORPHOLOGY_DEV/morphology/__init__.py",
+    "source": "D:\\1users\\Desktop\\codes\\MICROSTRUCTAI_RBC_PRODUCTIZATION_20261031\\baseline_rc2\\ui42\\vendor\\accepted_beta6\\research\\review\\vendor\\RBC_MORPHOLOGY_DEV\\morphology\\__init__.py",
+    "sha256": "a9fbd14159ab8d84b06c35262bafa4ffacd959cf4efa99826072b76cfbeb6620"
+  }
+]

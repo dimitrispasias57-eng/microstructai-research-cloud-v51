@@ -1,0 +1,27 @@
+{
+  "version": "0.2.0-dev",
+  "segmentation": {
+    "id": "interiors2_c1_e3_s1.2",
+    "family": "interiors",
+    "sigma": 1.2,
+    "low": 0.1,
+    "high": 0.25,
+    "close": 1,
+    "minimum_area": 300,
+    "maximum_area": 8000,
+    "solidity": 0.7,
+    "expand": 3,
+    "shrink": 0
+  },
+  "qc": {
+    "id": "qc_0.1_0.05_0.1",
+    "size_tail": 0.1,
+    "irregular": 0.05,
+    "small": 0.1,
+    "large": 0.1,
+    "border": 0.2,
+    "minimum_count": 5
+  },
+  "data_status": "All92 consumed; no donor-independent validation",
+  "reserve_opened": 0
+}

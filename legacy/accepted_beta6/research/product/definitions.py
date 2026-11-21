@@ -1,0 +1,40 @@
+"""Labels and documentation only. No scientific implementations."""
+COMPONENT_WARNING = 'Number of 8-connected foreground regions. A connected region may contain multiple touching physical objects, and a fragmented physical object may form multiple connected regions.'
+QC_NOTE = 'No configured plausibility warning was triggered. This does not establish segmentation accuracy.'
+AUTO_NOTE = 'Automatic segmentation accuracy depends on imaging domain and acquisition conditions. Review the resulting mask before interpreting structural measurements.'
+RBC_NOTE = 'Current three-donor comparison showed donor-dependent relationships with independent RheoScan measurements. Composite indices are exploratory and are not validated clinical or commercial aggregation indices.'
+SCOPE = 'MicroStructAI Research is software for quantitative structural characterization of supplied or reviewed 2-D masks. It reports defined geometric, spatial, topological and network descriptors with analysis provenance.'
+
+# key: (group, tier, friendly name, unit, exact definition/convention, interpretation limit)
+METRICS = {
+ 'areaFrac': ('A Geometry / occupancy',1,'Foreground area fraction','1','Foreground pixels / all pixels in analysed ROI.','Not a volume fraction without additional sampling assumptions.'),
+ 'nObjects': ('A Geometry / occupancy',1,'CONNECTED COMPONENT COUNT','count','Number of 8-connected foreground regions.',COMPONENT_WARNING),
+ 'meanArea': ('A Geometry / occupancy',1,'Mean component area','px²','Arithmetic mean of connected-component pixel areas; legacy empty-mask value 0.','Not necessarily mean cell, particle or fibre area.'),
+ 'medianArea': ('A Geometry / occupancy',1,'Median component area','px²','Median of connected-component pixel areas; legacy empty-mask value 0.','Touching or fragmented objects affect this statistic.'),
+ 'meanDiam': ('A Geometry / occupancy',1,'Mean equivalent-circle diameter','px','Mean of d_i = 2 sqrt(A_i / pi), over 8-connected components; empty value 0.','Equivalent-circle diameter of a connected foreground component. Not fibre, cell or particle diameter.'),
+ 'medianDiam': ('A Geometry / occupancy',1,'Median equivalent-circle diameter','px','Median of d_i = 2 sqrt(A_i / pi); empty value 0.','Equivalent-circle diameter of a connected foreground component.'),
+ 'largestObjectFrac': ('A Geometry / occupancy',1,'Largest component / ROI area','1','Largest component pixel area / ROI pixel count; empty value 0.','Not an instance fraction.'),
+ 'largestClusterFrac_phase': ('A Geometry / occupancy',1,'Largest component / foreground area','1','Largest 8-connected foreground area / all foreground area; empty value 0.','Dominance of connected regions, not automatically aggregation.'),
+ 'interfaceDensity_px': ('A Geometry / occupancy',1,'Boundary-pixel density proxy','1/px','4-neighbour erosion-defined foreground-boundary pixel count / ROI pixel count.','Pixel-grid estimator, not an unbiased Euclidean perimeter. Calibrated proxy = native value / micrometres-per-pixel.'),
+ 'Xi_horizontal_px': ('B Spatial structure',2,'Horizontal correlation length Xi','px','Mean-centred binary field; circular FFT autocorrelation normalized by peak; first positive row-direction crossing of exp(-1), linearly interpolated. No crossing or constant mask: unavailable.','Along image rows, not inferred flow direction or component diameter.'),
+ 'Xi_radial_px': ('B Spatial structure',2,'Radial correlation length Xi','px','Linear full FFT autocorrelation of mean-centred mask, normalized at zero lag and averaged in integer-radius bins; first exp(-1) crossing, interpolated except first-bin value 1. Legacy resize to max dimension 384, then scale back.','Texture proxy; differs from horizontal Xi in boundary/resampling conventions.'),
+ 'lacunarity16': ('B Spatial structure',2,'Lacunarity at 16-pixel box size','1','1 + population variance(box foreground counts) / mean(box counts)^2. Non-overlapping 16x16 boxes; discard incomplete edges; zero mean or too-small ROI: unavailable.','Scale-dependent heterogeneity, not a universal aggregation index. Physical box size changes with calibration.'),
+ 'mask_anisotropy': ('B Spatial structure',2,'Mask structure-tensor coherence','1','Mean (lambda1-lambda2)/(lambda1+lambda2+float64 machine epsilon). Stride k=max(1,round(max_dimension/220)); sample mask[::k,::k]. Difference of Gaussians: sigma=1.5/k minus 20/k. Smooth field with sigma=1.5/k, take numerical x/y gradients, smooth their tensor products with sigma=8/k, then calculate tensor eigenvalues. Gaussian boundaries use reflected extension.','Descriptor of mask texture, not orientation distribution of independently identified objects. Striding is internal to this legacy descriptor, not a change to the supplied mask.'),
+ 'Euler_canonical_8_4_v1': ('C Topology',2,'Canonical Euler characteristic (8/4)','count','8-connected foreground components minus enclosed 4-connected background components.','Digital ROI topology, not biological connectivity or graph-cycle count.'),
+ 'Euler_legacy_8_8': ('C Topology',2,'Legacy Euler characteristic (8/8)','count','8-connected foreground components minus enclosed 8-connected background components.','Historical convention; diagonal patterns can differ from canonical Euler.'),
+ 'holes_background4_v1': ('C Topology',2,'Enclosed holes (4-connected background)','count','Background components using 4-connectivity that do not touch the ROI border.','ROI truncation and connectivity affect holes.'),
+ 'holes_background8_legacy': ('C Topology',2,'Legacy enclosed holes (8-connected background)','count','Background components using 8-connectivity that do not touch the ROI border.','Not interchangeable with 4-connected holes.'),
+ 'skeleton_pixels': ('D Network / skeleton',3,'Unfiltered skeleton pixels','count','Number of pixels after the frozen skimage skeletonize operation on the full binary foreground.','Pixel count, not physical path length; no micrometre conversion.'),
+ 'branch_pixels': ('D Network / skeleton',3,'Unfiltered skeleton branch pixels','count','Skeleton pixels with at least three neighbours in the 8-neighbourhood.','One physical junction can contain several branch pixels.'),
+ 'endpoints': ('D Network / skeleton',3,'Unfiltered skeleton endpoints','count','Skeleton pixels with exactly one neighbour in the 8-neighbourhood.','Not necessarily physical fibre ends.'),
+ 'junction_count_cluster8_v1': ('D Network / skeleton',3,'Adjacent branch-pixel clusters','count','8-connected component count of unfiltered skeleton branch pixels.','Close physical junctions may merge; not anatomical ground truth.'),
+ 'network_length_px': ('D Network / skeleton',3,'Filtered skeleton graph-edge length','px','Remove foreground components smaller than 20 pixels², skeletonize, sum unique 8-adjacency edges weighted 1 or sqrt(2).','Internal descriptor convention only: supplied mask itself is not cleaned. Not physical fibre length without domain justification.'),
+ 'network_pixels': ('D Network / skeleton',3,'Filtered network pixels','count','Skeleton pixel count after the frozen 20-pixel² component filter.','Differs from unfiltered skeleton pixels.'),
+ 'network_endpoints': ('D Network / skeleton',3,'Filtered network endpoints','count','Degree-1 vertices in the filtered 8-adjacency skeleton graph.','Network meaning requires appropriate mask semantics.'),
+ 'network_branch_pixels': ('D Network / skeleton',3,'Filtered network branch pixels','count','Degree-at-least-3 vertices in the filtered 8-adjacency skeleton graph.','Not consolidated junction count.'),
+ 'network_components': ('D Network / skeleton',3,'Filtered graph components','count','Connected-component count of the filtered 8-adjacency skeleton graph.','Not physical object count.'),
+ 'network_pixel_cycles': ('D Network / skeleton',3,'Filtered pixel-graph cycle rank','count','E - V + C in the filtered undirected 8-adjacency pixel graph.','Diagonal triangles produce graph cycles; not necessarily enclosed physical holes.'),
+}
+
+def definition_rows():
+    return [dict(key=k,group=v[0],tier=v[1],name=v[2],units=v[3],definition=v[4],limitation=v[5]) for k,v in METRICS.items()]

@@ -1,7 +1,9 @@
-# MicroStructAI Research Cloud v5.0-rc1
+# MicroStructAI Research Cloud v5.1-rc1 (integration candidate)
 
 Separate unified Research Use Only integration candidate. The working
 MicroStructAI Native RBC Cloud v1.1 repository and deployment are not replaced.
+The stable v5.0 application is also unchanged. This candidate is not yet certified
+for hosted release; local synthetic passes are not hosted acceptance.
 
 ## Modules
 
@@ -18,8 +20,22 @@ MicroStructAI Native RBC Cloud v1.1 repository and deployment are not replaced.
   connected-region, topology, network, thickness, spectral descriptors and PCA.
 - Reference comparison: supplied binary masks at identical pixel geometry.
 - Session-local CSV, figures, HTML reports and ZIP provenance exports.
+- Supplied-instance morphology, explicit separate-cell stacks and nonoverlapping
+  field summaries; legacy perimeter conventions remain separately labelled.
+- Clot phase proposals with context/review gates; no validated fibrin recognition.
+- Structural detail, perturbation checks, supplied XML tracks, device-distance
+  analysis and descriptive/reference-table comparison.
+- Sealed historical classical proposals with explicit accept/reject/replacement.
+- Standalone PCA, stored multi-sample comparisons and bounded upload-only batches.
+- Historical Object Recording: four unchanged historical methods and their
+  original controls, optical/POD results, review and exports; a separate
+  measurement contract from the main General Structural Analysis route.
+- Restored RBC mask/POD, optical/mask and automatic-start diagnostics, paired
+  reference plots and independent-recording summary figures.
+- A visible Advanced M2 evidence page; no live external-model calls.
 
 Scientific source copies and weights are checked against VENDOR_MANIFEST.json.
+Additional exact historical helpers are checked against HELPER_MANIFEST.json.
 No training, model substitution or external inference is performed.
 
 ## Run
@@ -42,7 +58,9 @@ confidential datasets. This free research app is not a clinical-data service.
 Classical uploads: maximum 200 files, 8 MiB each, 32 MiB total, 1 million spatial
 pixels per image and 16 million channel-pixels per run. Native: maximum 50 crops,
 1 MiB each and 16 MiB total. No silent resizing/thinning. Larger complete
-recordings and direct video-container decoding remain LOCAL/ADVANCED ONLY.
+recordings remain LOCAL/ADVANCED ONLY. Direct video-container upload remains an
+explicit integration gap; study-specific extraction scripts are not a supported
+generic uploader and are not claimed intrinsically cloud-incompatible.
 Do not split one temporal recording merely to evade limits.
 
 All numerical results are research descriptors. Connected components do not
